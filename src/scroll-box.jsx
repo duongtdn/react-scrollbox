@@ -39,7 +39,7 @@ export default function ScrollBox({ children, fontFamily, onClick, onMounted }) 
   , []);
 
   useEffect(() => {
-    onMounted && onMounted({ scrollBottom });
+    onMounted && onMounted({ scrollToBottom, scrollToTop });
   }, []);
 
   useEffect(
@@ -85,9 +85,17 @@ export default function ScrollBox({ children, fontFamily, onClick, onMounted }) 
     });
   }
 
-  function scrollBottom() {
+  function scrollToBottom() {
     containerRef.current && containerRef.current.scroll({
       top: containerRef.current.scrollHeight,
+      left: 0,
+      behavior: 'smooth',
+    });
+  }
+
+  function scrollToTop() {
+    containerRef.current && containerRef.current.scroll({
+      top: 0,
       left: 0,
       behavior: 'smooth',
     });

@@ -1,6 +1,6 @@
 " use strict"
 
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import ScrollBox from '../src/scroll-box';
@@ -24,8 +24,11 @@ const data = {
 };
 
 const Demo = () => {
-  const [msg, setMsg] = useState(data.short);
+
+  const [msg, setMsg] = useState(data.long);
   const [font, setFont] = useState();
+  const scrollHandler = useRef();
+
   return (
     <div style = {{ padding: '16px'}}>
       <h2> React ScrollBox </h2>
@@ -34,9 +37,11 @@ const Demo = () => {
         <button onClick = {() => setMsg(data.long)} style= {{margin: '0 8px'}}>Long</button>
         <button onClick = {() => setFont('Courier New')} style= {{margin: '0 8px'}}>Courier New</button>
         <button onClick = {() => setFont('Consolas')} style= {{margin: '0 8px'}}>Consolas</button>
+        <button onClick = {scrollToBottom} style= {{margin: '0 8px'}}>Scroll to bottom</button>
+        <button onClick = {scrollToTop} style= {{margin: '0 8px'}}>Scroll to top</button>
       </div>
       <div style={{ height: '200px', width: '100%', background: '#313131', color: '#fff'}}>
-        <ScrollBox fontFamily = {font}>
+        <ScrollBox fontFamily = {font} onClick = {e => alert('clicked me')} onMounted = {h => scrollHandler.current = h}>
           <div>
             {msg}
           </div>
@@ -44,6 +49,15 @@ const Demo = () => {
       </div>
     </div>
   );
+
+  function scrollToBottom() {
+    scrollHandler.current && scrollHandler.current.scrollToBottom();
+  }
+
+  function scrollToTop() {
+    scrollHandler.current && scrollHandler.current.scrollToTop();
+  }
+
 }
 
 const root = createRoot(document.getElementById('root'));
