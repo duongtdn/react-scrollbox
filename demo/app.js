@@ -3,7 +3,7 @@
 import React, { useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import ScrollBox from '../src/scroll-box';
+import ScrollBox from '../src';
 
 const data = {
   short: ' Lorem ipsum dolor sit amet, cu vel rebum graece.',
