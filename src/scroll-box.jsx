@@ -16,10 +16,14 @@ const Container = styled.div`
   font-family: ${props => props.fontFamily || 'consolas'};
 `;
 
-export default function ScrollBox({ children, fontFamily, onClick, onMounted }) {
+export default function ScrollBox({ children, fontFamily, onClick, onMounted, alwaysShowScrollBar = false }) {
 
   const [currentScrollTop, setCurrentScrollTop] = useState(0);
-  const [scrollYHide, setScrollYHide] = useState(true);
+  const [scrollYHide, setScrollYHide] = useState(!alwaysShowScrollBar);
+
+  useEffect(
+    () => { alwaysShowScrollBar === true && setScrollYHide(false) }
+  , [alwaysShowScrollBar]);
 
   const containerRef = useRef();
 
@@ -30,7 +34,7 @@ export default function ScrollBox({ children, fontFamily, onClick, onMounted }) 
 
   useEffect(
     () => {
-      const resizeObserver = new ResizeObserver(() => setScrollYHide(isNotOverflowY()));
+      const resizeObserver = new ResizeObserver(() => !alwaysShowScrollBar && setScrollYHide(isNotOverflowY()));
       if (containerRef.current) {
         resizeObserver.observe(containerRef.current);
       }
@@ -43,8 +47,8 @@ export default function ScrollBox({ children, fontFamily, onClick, onMounted }) 
   }, []);
 
   useEffect(
-    () => setScrollYHide(isNotOverflowY())
-  ,[children])
+    () => { !alwaysShowScrollBar && setScrollYHide(isNotOverflowY()) }
+  ,[children]);
 
   const sliderY = {
     top: containerRef.current? (currentScrollTop/containerRef.current.scrollHeight)*100 : 0,
@@ -105,7 +109,7 @@ export default function ScrollBox({ children, fontFamily, onClick, onMounted }) 
     setTimeout(
       () => {
         setCurrentScrollTop(e.target.scrollTop);
-        setScrollYHide(isNotOverflowY());
+        !alwaysShowScrollBar && setScrollYHide(isNotOverflowY());
       }
     , 150);
   }
