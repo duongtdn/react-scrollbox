@@ -20,6 +20,7 @@ export default function ScrollBox({ children, fontFamily, onClick, onMounted, al
 
   const [currentScrollTop, setCurrentScrollTop] = useState(0);
   const [scrollYHide, setScrollYHide] = useState(!alwaysShowScrollBar);
+  const [sliderY, setSliderY] = useState({ top: 0, height: 0 });
 
   useEffect(
     () => { alwaysShowScrollBar === true && setScrollYHide(false) }
@@ -34,7 +35,11 @@ export default function ScrollBox({ children, fontFamily, onClick, onMounted, al
 
   useEffect(
     () => {
-      const resizeObserver = new ResizeObserver(() => !alwaysShowScrollBar && setScrollYHide(isNotOverflowY()));
+      const handleContainerResizer = () => {
+        !alwaysShowScrollBar && setScrollYHide(isNotOverflowY());
+        setSliderY(calculateSliderY());
+      };
+      const resizeObserver = new ResizeObserver(handleContainerResizer);
       if (containerRef.current) {
         resizeObserver.observe(containerRef.current);
       }
@@ -43,17 +48,16 @@ export default function ScrollBox({ children, fontFamily, onClick, onMounted, al
   , []);
 
   useEffect(() => {
-    onMounted && onMounted({ scrollToBottom, scrollToTop });
+    onMounted && onMounted({ scrollToBottom, scrollToTop, rerenderScrollBar });
   }, []);
 
   useEffect(
     () => { !alwaysShowScrollBar && setScrollYHide(isNotOverflowY()) }
   ,[children]);
 
-  const sliderY = {
-    top: containerRef.current? (currentScrollTop/containerRef.current.scrollHeight)*100 : 0,
-    height: containerRef.current? (containerRef.current.clientHeight/containerRef.current.scrollHeight)*100 : 0
-  }
+  useEffect(
+    () => { containerRef.current && setSliderY(calculateSliderY()); }
+  , [containerRef.current, currentScrollTop])
 
   return (
     <div style = {{display: 'flex', flexDirection: 'row', height: '100%'}}>
@@ -80,6 +84,13 @@ export default function ScrollBox({ children, fontFamily, onClick, onMounted, al
     </div>
   );
 
+  function calculateSliderY() {
+    return {
+      top: containerRef.current? (currentScrollTop/containerRef.current.scrollHeight)*100 : 0,
+      height: containerRef.current? (containerRef.current.clientHeight/containerRef.current.scrollHeight)*100 : 0
+    };
+  }
+
   function stepScrollY(value) {
     const calculatedTopAfterScroll = currentScrollTop + value;
     containerRef.current && containerRef.current.scroll({
@@ -103,6 +114,10 @@ export default function ScrollBox({ children, fontFamily, onClick, onMounted, al
       left: 0,
       behavior: 'smooth',
     });
+  }
+
+  function rerenderScrollBar() {
+    setSliderY(calculateSliderY());
   }
 
   function handleScroll(e) {
