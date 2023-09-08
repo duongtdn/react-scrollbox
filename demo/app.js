@@ -26,30 +26,29 @@ const data = {
 const Demo = () => {
 
   const [msg, setMsg] = useState(data.long);
-  const [font, setFont] = useState();
   const [alwaysShowScrollBar, setAlwaysShowScrollBar] = useState(false);
   const scrollHandler = useRef();
-
+  const handleScroll = () => {
+    console.log('Scrolled');
+  };
   return (
     <div style = {{ padding: '16px'}}>
       <h2> React ScrollBox </h2>
       <div style = {{margin: '16px 0'}}>
         <button onClick = {() => setMsg(data.short)} style= {{margin: '0 8px'}}>Short</button>
         <button onClick = {() => setMsg(data.long)} style= {{margin: '0 8px'}}>Long</button>
-        <button onClick = {() => setFont('Courier New')} style= {{margin: '0 8px'}}>Courier New</button>
-        <button onClick = {() => setFont('Consolas')} style= {{margin: '0 8px'}}>Consolas</button>
         <button onClick = {() => setAlwaysShowScrollBar(!alwaysShowScrollBar)} style= {{margin: '0 8px'}}>Toggle Always show scroll bar</button>
         <button onClick = {scrollToBottom} style= {{margin: '0 8px'}}>Scroll to bottom</button>
         <button onClick = {scrollToTop} style= {{margin: '0 8px'}}>Scroll to top</button>
       </div>
       <div style={{ height: '200px', width: '100%', background: '#313131', color: '#fff'}}>
         <ScrollBox
-          fontFamily = {font}
           alwaysShowScrollBar = {alwaysShowScrollBar}
           onClick = {e => alert('clicked me')}
           onMounted = {h => scrollHandler.current = h}
+          onScroll={handleScroll}
         >
-          <div>
+          <div style = {{fontFamily: 'Consolas'}}>
             {msg}
           </div>
         </ScrollBox>

@@ -13,10 +13,9 @@ const Container = styled.div`
   &::-webkit-scrollbar {
     display: none;
   }
-  font-family: ${props => props.fontFamily || 'consolas'};
 `;
 
-export default function ScrollBox({ children, fontFamily, onClick, onMounted, alwaysShowScrollBar = false }) {
+export default function ScrollBox({ children, onClick, onMounted, onScroll, alwaysShowScrollBar = false }) {
 
   const [currentScrollTop, setCurrentScrollTop] = useState(0);
   const [scrollYHide, setScrollYHide] = useState(!alwaysShowScrollBar);
@@ -63,7 +62,7 @@ export default function ScrollBox({ children, fontFamily, onClick, onMounted, al
     <div style = {{display: 'flex', flexDirection: 'row', height: '100%'}}>
       <div style = {{padding: '8px 6px 8px 16px', height: '100%', flex: 1}}>
         <div style = {{ display: 'flex', flexDirection: 'column', height: '100%'}} >
-          <Container className = "terminal"  ref = {containerRef} onClick = {onClick} fontFamily = {fontFamily}>
+          <Container className = "terminal"  ref = {containerRef} onClick = {onClick} >
             {children}
           </Container>
           <div style = {{ height: '10px', width: '100%', background: 'inherit'}}>
@@ -121,12 +120,14 @@ export default function ScrollBox({ children, fontFamily, onClick, onMounted, al
   }
 
   function handleScroll(e) {
+    const SCROLL_DELAY = 150;
     setTimeout(
       () => {
         setCurrentScrollTop(e.target.scrollTop);
         !alwaysShowScrollBar && setScrollYHide(isNotOverflowY());
+        onScroll && onScroll()
       }
-    , 150);
+    , SCROLL_DELAY);
   }
 
   function requestScrollY(position) {
