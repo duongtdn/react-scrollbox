@@ -9,7 +9,7 @@ To use React ScrollBox in your project, follow these steps:
 1. Install the package via npm:
 
 ```bash
-npm install react-scrollbox --save
+npm install @duongtdn/react-scrollbox --save
 ```
 
 2. Run a demo:
@@ -24,7 +24,7 @@ then open `localhost:3000`` in your browser
 Here's a basic example of how to use the `ScrollBox` component:
 
 ```javascript
-import ScrollBox from 'react-scrollbox';
+import ScrollBox from '@duongtdn/react-scrollbox';
 
 const MyComponent = () => {
   const alwaysShowScrollBar = true; /* specify whether to always show the scroll bar */
