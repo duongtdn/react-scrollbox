@@ -13,7 +13,7 @@ const Container = styled.div`
   justify-content: space-between;
   height: 100%;
   padding: 0 6px;
-  opacity: ${props => props.hide? '0' : '.6'};
+  opacity: ${props => props.$hide? '0' : '.6'};
 `;
 
 export default function ScrollBar(props) {
@@ -32,7 +32,7 @@ export default function ScrollBar(props) {
   } = props;
 
   return (
-    <Container hide = {hide}>
+    <Container $hide = {hide}>
       {
         showArrow? <ScrollArrow direction = 'up' onClick = {onClickArrowUp} /> : null
       }
