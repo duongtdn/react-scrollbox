@@ -1,6 +1,6 @@
 "use strict"
 
-import React from 'react';
+import React, { forwardRef } from 'react';
 import styled from 'styled-components';
 
 import Slider from './slider';
@@ -16,7 +16,7 @@ const Container = styled.div`
   opacity: ${props => props.$hide? '0' : '.6'};
 `;
 
-export default function ScrollBar(props) {
+const ScrollBar = forwardRef(function ScrollBar(props, ref) {
 
   const {
     showArrow = true,
@@ -32,7 +32,7 @@ export default function ScrollBar(props) {
   } = props;
 
   return (
-    <Container $hide = {hide}>
+    <Container ref={ref} $hide={hide}>
       {
         showArrow? <ScrollArrow direction = 'up' onClick = {onClickArrowUp} /> : null
       }
@@ -48,5 +48,6 @@ export default function ScrollBar(props) {
       }
     </Container>
   );
+});
 
-};
+export default ScrollBar;

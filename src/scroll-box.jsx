@@ -20,12 +20,14 @@ export default function ScrollBox({ children, onClick, onMounted, onScroll, alwa
   const [currentScrollTop, setCurrentScrollTop] = useState(0);
   const [scrollYHide, setScrollYHide] = useState(!alwaysShowScrollBar);
   const [sliderY, setSliderY] = useState({ top: 0, height: 0 });
+  const [scrollBarWidth, setScrollBarWidth] = useState(0);
 
   useEffect(
     () => { alwaysShowScrollBar === true && setScrollYHide(false) }
   , [alwaysShowScrollBar]);
 
   const containerRef = useRef();
+  const scrollBarRef = useRef();
 
   useEffect(() => {
     containerRef.current && containerRef.current.addEventListener('scroll', handleScroll);
@@ -58,9 +60,24 @@ export default function ScrollBox({ children, onClick, onMounted, onScroll, alwa
     () => { containerRef.current && setSliderY(calculateSliderY()); }
   , [containerRef.current, currentScrollTop])
 
+  useEffect(() => {
+    if (scrollBarRef.current) {
+      // Get the actual width of the scrollbar including padding
+      const width = scrollBarRef.current.getBoundingClientRect().width;
+      setScrollBarWidth(width);
+    }
+  }, [scrollBarRef.current]);
+
+  // Calculate the main content width based on scrollbar width
+  const mainContentStyle = {
+    width: scrollBarWidth ? `calc(100% - ${scrollBarWidth}px)` : '100%',
+    height: '100%',
+    padding: '8px 6px 8px 16px'
+  };
+
   return (
     <div style = {{display: 'flex', flexDirection: 'row', height: '100%'}}>
-      <div style = {{padding: '8px 6px 8px 16px', height: '100%', flex: 1}}>
+      <div style = {mainContentStyle}>
         <div style = {{ display: 'flex', flexDirection: 'column', height: '100%'}} >
           <Container className = "terminal"  ref = {containerRef} onClick = {onClick} >
             {children}
@@ -70,7 +87,8 @@ export default function ScrollBox({ children, onClick, onMounted, onScroll, alwa
           </div>
         </div>
       </div>
-      <ScrollBar  thumbPosition = { sliderY.top }
+      <ScrollBar  ref = {scrollBarRef}
+                  thumbPosition = { sliderY.top }
                   thumbHeight = { sliderY.height }
                   thumbColor = '#2196F3'  // TODO: prop to be customizable
                   thumbOpacity = '.3'     // TODO: prop to be customizable
